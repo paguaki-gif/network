@@ -1,1 +1,645 @@
+@charset "UTF-8";
 
+/* =========================================================
+   カラートークン
+   配線盤をイメージした青灰ベース＋信号色（緑・赤・橙）
+   ========================================================= */
+:root{
+  --ink:        #14212e;
+  --ink-soft:   #55677a;
+  --paper:      #eef3f8;
+  --panel:      #ffffff;
+  --line:       #d3dde7;
+  --wire:       #b7c5d3;
+
+  --signal:     #10a05f;   /* 開通 */
+  --alert:      #e03131;   /* 衝突 */
+  --warn:       #ef8a09;   /* 別ネットワーク */
+  --router:     #2563c9;   /* ルータ／リンク */
+
+  --signal-bg:  #e3f6ec;
+  --alert-bg:   #fdeaea;
+  --warn-bg:    #fdf1e0;
+  --router-bg:  #e7eefb;
+
+  --radius:     14px;
+  --radius-sm:  9px;
+  --shadow:     0 1px 2px rgba(20,33,46,.06), 0 8px 24px rgba(20,33,46,.07);
+
+  --mono: "SFMono-Regular", "Roboto Mono", "Consolas", monospace;
+  --sans: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP",
+          "Yu Gothic UI", "Meiryo", system-ui, sans-serif;
+}
+
+*{ box-sizing:border-box; }
+
+html{ -webkit-text-size-adjust:100%; }
+
+body{
+  margin:0;
+  font-family:var(--sans);
+  color:var(--ink);
+  background:
+    linear-gradient(transparent 31px, rgba(37,99,201,.045) 32px) 0 0 / 100% 32px,
+    linear-gradient(90deg, transparent 31px, rgba(37,99,201,.045) 32px) 0 0 / 32px 100%,
+    var(--paper);
+  line-height:1.7;
+}
+
+h1,h2{ margin:0; line-height:1.35; }
+
+button{ font-family:inherit; }
+
+:focus-visible{
+  outline:3px solid var(--router);
+  outline-offset:2px;
+}
+
+.is-hidden{ display:none !important; }
+
+/* =========================================================
+   ヘッダー・タブ
+   ========================================================= */
+.site-head{
+  background:var(--ink);
+  color:#fff;
+  border-bottom:4px solid var(--router);
+}
+.head-inner{
+  max-width:1080px;
+  margin:0 auto;
+  padding:18px 20px 0;
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+.brand-mark{
+  font-size:34px;
+  line-height:1;
+  background:rgba(255,255,255,.1);
+  border-radius:12px;
+  padding:8px 10px;
+}
+.brand-text h1{ font-size:1.3rem; letter-spacing:.02em; }
+.brand-text p{
+  margin:2px 0 0;
+  font-size:.82rem;
+  color:#a9bdd2;
+}
+
+.tabs{
+  display:flex;
+  gap:8px;
+  margin-top:16px;
+}
+.tab{
+  flex:1 1 0;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:1px;
+  padding:10px 14px;
+  border:none;
+  border-radius:12px 12px 0 0;
+  background:rgba(255,255,255,.08);
+  color:#c6d6e6;
+  cursor:pointer;
+  text-align:left;
+  transition:background .18s, color .18s;
+}
+.tab:hover{ background:rgba(255,255,255,.16); color:#fff; }
+.tab.is-active{
+  background:var(--paper);
+  color:var(--ink);
+}
+.tab-no{
+  font-size:.7rem;
+  font-weight:700;
+  color:var(--router);
+}
+.tab.is-active .tab-no{ color:var(--router); }
+.tab:not(.is-active) .tab-no{ color:#8fb4e8; }
+.tab-name{ font-size:.93rem; font-weight:700; }
+
+/* =========================================================
+   共通レイアウト
+   ========================================================= */
+main{
+  max-width:1080px;
+  margin:0 auto;
+  padding:22px 20px 64px;
+}
+
+.brief{
+  margin:0 0 18px;
+  padding:14px 18px;
+  background:var(--router-bg);
+  border-left:5px solid var(--router);
+  border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+}
+.brief-lead{ margin:0; font-weight:700; }
+.brief-sub{ margin:4px 0 0; font-size:.84rem; color:var(--ink-soft); }
+
+.panel{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:16px 18px 18px;
+  margin-bottom:18px;
+}
+.panel-head{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:12px;
+  padding-bottom:9px;
+  border-bottom:1px dashed var(--line);
+}
+.panel-head h2{ font-size:1rem; }
+.panel-note{ margin:0; font-size:.78rem; color:var(--ink-soft); }
+
+.mini-btn{
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--ink-soft);
+  border-radius:999px;
+  padding:4px 13px;
+  font-size:.76rem;
+  cursor:pointer;
+  transition:border-color .18s, color .18s;
+}
+.mini-btn:hover{ border-color:var(--router); color:var(--router); }
+
+.primary-btn{
+  border:none;
+  background:var(--router);
+  color:#fff;
+  font-weight:700;
+  border-radius:10px;
+  padding:10px 20px;
+  cursor:pointer;
+  transition:filter .18s;
+}
+.primary-btn:hover{ filter:brightness(1.1); }
+
+/* =========================================================
+   モード1：カード置き場
+   ========================================================= */
+.tray{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  min-height:56px;
+}
+.tray:empty::after{
+  content:"カードはすべて配置済みです";
+  font-size:.8rem;
+  color:var(--ink-soft);
+}
+
+.card{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:9px 14px;
+  background:#fff;
+  border:2px solid var(--wire);
+  border-bottom-width:4px;
+  border-radius:var(--radius-sm);
+  font-family:var(--mono);
+  font-size:1rem;
+  letter-spacing:.01em;
+  cursor:grab;
+  user-select:none;
+  transition:transform .14s, border-color .14s, box-shadow .14s;
+}
+.card:hover{ transform:translateY(-2px); border-color:var(--router); }
+.card:active{ cursor:grabbing; }
+.card.is-picked{
+  border-color:var(--router);
+  background:var(--router-bg);
+  box-shadow:0 0 0 3px rgba(37,99,201,.2);
+}
+.card.is-dragging{ opacity:.4; }
+.card-grip{ color:var(--wire); font-size:.9rem; }
+
+/* =========================================================
+   モード1：ネットワーク図
+   ========================================================= */
+.topology{ padding-top:6px; }
+
+.router{
+  width:max-content;
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  gap:11px;
+  padding:11px 20px;
+  background:var(--router-bg);
+  border:2px solid var(--router);
+  border-radius:var(--radius-sm);
+}
+.router-icon{ font-size:26px; line-height:1; }
+.router-body{ display:flex; flex-direction:column; line-height:1.3; }
+.router-name{ font-size:.78rem; color:var(--router); font-weight:700; }
+.router-ip{ font-family:var(--mono); font-weight:700; }
+
+/* 幹線（ルータ→横棒） */
+.trunk{ position:relative; height:34px; }
+.trunk-stem{
+  position:absolute; top:0; left:50%;
+  width:3px; height:18px;
+  margin-left:-1.5px;
+  background:var(--wire);
+}
+.trunk-bar{
+  position:absolute; top:17px; left:12.5%; right:12.5%;
+  height:3px;
+  background:var(--wire);
+}
+
+.pc-row{
+  display:grid;
+  grid-template-columns:repeat(4, 1fr);
+  gap:8px;
+}
+
+.pc-col{ display:flex; flex-direction:column; align-items:center; }
+
+/* 各PCへの引き込み線 */
+.drop-line{
+  position:relative;
+  width:3px;
+  height:38px;
+  background:var(--wire);
+  transition:background .25s;
+}
+.drop-line::after{         /* 流れるパケット */
+  content:"";
+  position:absolute;
+  left:50%; top:0;
+  width:9px; height:9px;
+  margin-left:-4.5px;
+  border-radius:50%;
+  background:var(--signal);
+  box-shadow:0 0 9px var(--signal);
+  opacity:0;
+}
+.pc-col.is-ok .drop-line{ background:var(--signal); }
+.pc-col.is-ok .drop-line::after{
+  animation:packet 1.15s linear infinite;
+}
+.pc-col.is-dup  .drop-line{ background:var(--alert); }
+.pc-col.is-bad  .drop-line{ background:var(--wire); }
+
+@keyframes packet{
+  0%   { opacity:0; transform:translateY(0); }
+  12%  { opacity:1; }
+  88%  { opacity:1; }
+  100% { opacity:0; transform:translateY(30px); }
+}
+
+/* PC本体 */
+.pc{
+  width:100%;
+  background:#fff;
+  border:2px solid var(--wire);
+  border-radius:var(--radius-sm);
+  padding:10px 8px 12px;
+  text-align:center;
+  transition:border-color .25s, background .25s;
+}
+.pc-screen{ font-size:26px; line-height:1; }
+.pc-name{ font-size:.78rem; font-weight:700; color:var(--ink-soft); }
+
+.slot{
+  margin-top:7px;
+  min-height:42px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:5px 4px;
+  border:2px dashed var(--wire);
+  border-radius:8px;
+  background:#f7fafd;
+  font-family:var(--mono);
+  font-size:.92rem;
+  color:var(--ink-soft);
+  cursor:pointer;
+  transition:border-color .2s, background .2s;
+  word-break:break-all;
+}
+.slot.is-over{ border-color:var(--router); background:var(--router-bg); }
+.slot.has-card{
+  border-style:solid;
+  color:var(--ink);
+  font-weight:700;
+  background:#fff;
+}
+
+.pc-col.is-ok  .pc{ border-color:var(--signal); background:var(--signal-bg); }
+.pc-col.is-ok  .slot{ border-color:var(--signal); }
+.pc-col.is-bad .pc{ border-color:var(--warn);   background:var(--warn-bg); }
+.pc-col.is-bad .slot{ border-color:var(--warn); }
+.pc-col.is-dup .pc{ border-color:var(--alert);  background:var(--alert-bg);
+                    animation:blink .7s ease-in-out 4; }
+.pc-col.is-dup .slot{ border-color:var(--alert); }
+
+@keyframes blink{
+  0%,100%{ box-shadow:0 0 0 0 rgba(224,49,49,0); }
+  50%    { box-shadow:0 0 0 7px rgba(224,49,49,.28); }
+}
+
+.pc-status{
+  margin-top:6px;
+  font-size:.72rem;
+  font-weight:700;
+  min-height:1.1em;
+}
+.pc-col.is-ok  .pc-status{ color:var(--signal); }
+.pc-col.is-bad .pc-status{ color:var(--warn); }
+.pc-col.is-dup .pc-status{ color:var(--alert); }
+
+/* =========================================================
+   ログ
+   ========================================================= */
+.log{
+  list-style:none;
+  margin:0;
+  padding:0;
+  max-height:190px;
+  overflow-y:auto;
+  font-size:.85rem;
+}
+.log li{
+  padding:7px 11px;
+  border-radius:8px;
+  margin-bottom:5px;
+  background:#f5f8fb;
+  border-left:4px solid var(--wire);
+}
+.log li.ok  { background:var(--signal-bg); border-left-color:var(--signal); }
+.log li.bad { background:var(--alert-bg);  border-left-color:var(--alert); }
+.log li.warn{ background:var(--warn-bg);   border-left-color:var(--warn); }
+.log li.info{ background:var(--router-bg); border-left-color:var(--router); }
+.log-time{
+  font-family:var(--mono);
+  font-size:.74rem;
+  color:var(--ink-soft);
+  margin-right:7px;
+}
+
+/* =========================================================
+   モード2：ツールバー
+   ========================================================= */
+.toolbar{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:18px;
+  padding:13px 16px;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+}
+.tool-btn{
+  border:2px solid var(--router);
+  background:#fff;
+  color:var(--router);
+  font-weight:700;
+  border-radius:10px;
+  padding:9px 17px;
+  cursor:pointer;
+  transition:background .18s, color .18s;
+}
+.tool-btn[aria-pressed="true"]{
+  background:var(--router);
+  color:#fff;
+}
+.tool-hint{
+  margin:0;
+  font-size:.8rem;
+  color:var(--ink-soft);
+  flex:1 1 140px;
+}
+.dhcp-btn{
+  border:none;
+  border-radius:10px;
+  padding:11px 20px;
+  font-weight:700;
+  color:#fff;
+  background:var(--wire);
+  cursor:not-allowed;
+}
+.dhcp-btn:not([disabled]){
+  background:linear-gradient(100deg, #2563c9, #10a05f);
+  cursor:pointer;
+  animation:glow 1.7s ease-in-out infinite;
+}
+@keyframes glow{
+  0%,100%{ box-shadow:0 0 0 0 rgba(16,160,95,.45); }
+  50%    { box-shadow:0 0 0 10px rgba(16,160,95,0); }
+}
+
+/* =========================================================
+   モード2：LANマップ
+   ========================================================= */
+.lan-wrap{ position:relative; }
+
+.lan-router{
+  width:max-content;
+  margin:0 auto 16px;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding:9px 18px;
+  background:var(--router-bg);
+  border:2px solid var(--router);
+  border-radius:var(--radius-sm);
+}
+.lan-router-name{ font-size:.8rem; font-weight:700; color:var(--router); }
+.lan-router-ip{ font-family:var(--mono); font-weight:700; }
+
+.lan-grid{
+  display:grid;
+  grid-template-columns:repeat(5, 1fr);
+  gap:10px;
+}
+
+.node{ display:flex; flex-direction:column; align-items:center; }
+
+.node-line{
+  width:3px;
+  height:20px;
+  background:var(--signal);
+  transition:background .25s;
+}
+.node.is-error .node-line{ background:var(--alert); }
+
+.node-box{
+  width:100%;
+  background:#fff;
+  border:2px solid var(--signal);
+  border-radius:var(--radius-sm);
+  padding:9px 5px 10px;
+  text-align:center;
+  transition:border-color .25s, background .25s, transform .14s;
+}
+.node.is-error .node-box{
+  border-color:var(--alert);
+  background:var(--alert-bg);
+  animation:blink .9s ease-in-out infinite;
+}
+.node-face{ font-size:23px; line-height:1.1; }
+.node-name{ font-size:.76rem; font-weight:700; }
+.node-ip{
+  font-family:var(--mono);
+  font-size:.72rem;
+  color:var(--ink-soft);
+  word-break:break-all;
+}
+.node.is-error .node-ip{ color:var(--alert); font-weight:700; }
+
+/* 診断モード中だけクリックできる見た目に */
+.lan-wrap.diag-on .node-box{ cursor:zoom-in; }
+.lan-wrap.diag-on .node-box:hover{
+  transform:translateY(-3px);
+  border-color:var(--router);
+}
+.node.is-selected .node-box{
+  box-shadow:0 0 0 4px rgba(37,99,201,.22);
+}
+
+/* DHCPパケット */
+.packet-layer{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  overflow:hidden;
+}
+.packet{
+  position:absolute;
+  width:12px; height:12px;
+  border-radius:50%;
+  background:var(--signal);
+  box-shadow:0 0 12px var(--signal);
+  transition:transform .75s cubic-bezier(.4,.1,.3,1), opacity .75s;
+}
+
+/* =========================================================
+   モード2：プロパティパネル
+   ========================================================= */
+.prop-empty{ font-size:.85rem; color:var(--ink-soft); }
+.prop-empty p{ margin:0; }
+
+.prop-row{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:10px;
+}
+.prop-row label{
+  width:170px;
+  font-size:.83rem;
+  font-weight:700;
+  color:var(--ink-soft);
+}
+.ip-input{
+  flex:1 1 170px;
+  min-width:140px;
+  padding:9px 12px;
+  border:2px solid var(--line);
+  border-radius:8px;
+  font-family:var(--mono);
+  font-size:1rem;
+  color:var(--ink);
+  background:#fff;
+}
+.ip-input:read-only{ background:#f5f8fb; color:var(--ink-soft); }
+.ip-input:focus{ border-color:var(--router); outline:none; }
+
+.prop-msg{
+  margin:4px 0 12px;
+  font-size:.83rem;
+  min-height:1.2em;
+}
+.prop-msg.ok { color:var(--signal); font-weight:700; }
+.prop-msg.bad{ color:var(--alert);  font-weight:700; }
+
+.prop-actions{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+
+/* =========================================================
+   クリア演出
+   ========================================================= */
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(20,33,46,.62);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  z-index:50;
+}
+.overlay-card{
+  background:#fff;
+  border-radius:20px;
+  padding:34px 30px 28px;
+  text-align:center;
+  max-width:400px;
+  box-shadow:0 20px 50px rgba(0,0,0,.3);
+  animation:pop .34s cubic-bezier(.2,1.3,.4,1);
+}
+@keyframes pop{
+  from{ transform:scale(.85); opacity:0; }
+  to  { transform:scale(1);   opacity:1; }
+}
+.overlay-spark{ font-size:46px; line-height:1; }
+.overlay-card h2{ margin:8px 0 6px; font-size:1.3rem; color:var(--signal); }
+.overlay-card p{ margin:0 0 20px; font-size:.9rem; color:var(--ink-soft); }
+
+/* =========================================================
+   レスポンシブ
+   ========================================================= */
+@media (max-width:860px){
+  .lan-grid{ grid-template-columns:repeat(4, 1fr); }
+}
+
+@media (max-width:680px){
+  .head-inner{ padding:14px 14px 0; }
+  .brand-text h1{ font-size:1.08rem; }
+  main{ padding:18px 14px 56px; }
+
+  .tab-name{ font-size:.8rem; }
+
+  /* PCは2列×2段に */
+  .pc-row{ grid-template-columns:repeat(2, 1fr); gap:14px 10px; }
+  .trunk-bar{ left:25%; right:25%; }
+
+  .lan-grid{ grid-template-columns:repeat(3, 1fr); }
+
+  .prop-row label{ width:100%; }
+}
+
+@media (max-width:420px){
+  .lan-grid{ grid-template-columns:repeat(2, 1fr); }
+  .tabs{ flex-direction:column; gap:5px; }
+  .tab{ border-radius:10px; }
+}
+
+/* 動きを減らす設定への配慮 */
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;
+  }
+}

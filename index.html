@@ -1,1 +1,196 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>新米エンジニア！学校のLANを繋げ</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
 
+<!-- ===== ヘッダー：タイトルとモード切替タブ ===== -->
+<header class="site-head">
+  <div class="head-inner">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">🖧</span>
+      <div class="brand-text">
+        <h1>新米エンジニア！学校のLANを繋げ</h1>
+        <p>情報I ネットワーク分野／IPアドレスを手で動かして覚える</p>
+      </div>
+    </div>
+
+    <nav class="tabs" role="tablist" aria-label="モード切替">
+      <button class="tab is-active" role="tab" id="tab-1"
+              aria-selected="true" aria-controls="mode-1" data-mode="1">
+        <span class="tab-no">モード1</span>
+        <span class="tab-name">IPアドレスを割り当てよう</span>
+      </button>
+      <button class="tab" role="tab" id="tab-2"
+              aria-selected="false" aria-controls="mode-2" data-mode="2">
+        <span class="tab-no">モード2</span>
+        <span class="tab-name">犯人を探せ！ネットワークの競合</span>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ============================================================ -->
+<!-- モード1：IPアドレスを割り当てよう                              -->
+<!-- ============================================================ -->
+<section class="mode" id="mode-1" role="tabpanel" aria-labelledby="tab-1">
+
+  <div class="brief">
+    <p class="brief-lead">ルータと同じグループの番号を、重複しないように4台へ配ってください。</p>
+    <p class="brief-sub">カードをドラッグして枠に入れる／カードを押してから枠を押す、どちらでも置けます。枠のカードを押すと手札に戻ります。</p>
+  </div>
+
+  <!-- 手札：アドレスカード -->
+  <div class="panel">
+    <div class="panel-head">
+      <h2>手札のアドレスカード</h2>
+      <p class="panel-note">6枚のうち、使えるのは4枚だけ</p>
+    </div>
+    <div class="tray" id="card-tray" aria-label="アドレスカード置き場"></div>
+  </div>
+
+  <!-- ネットワーク図 -->
+  <div class="panel">
+    <div class="panel-head">
+      <h2>教室のネットワーク</h2>
+      <p class="panel-note">緑の線＝通信できている状態</p>
+    </div>
+
+    <div class="topology">
+      <!-- ルータ -->
+      <div class="router">
+        <div class="router-icon" aria-hidden="true">📡</div>
+        <div class="router-body">
+          <span class="router-name">ルータ</span>
+          <span class="router-ip">192.168.1.1</span>
+        </div>
+      </div>
+
+      <!-- 幹線 -->
+      <div class="trunk" aria-hidden="true">
+        <div class="trunk-stem"></div>
+        <div class="trunk-bar"></div>
+      </div>
+
+      <!-- PC4台（JSが生成） -->
+      <div class="pc-row" id="pc-row"></div>
+    </div>
+  </div>
+
+  <!-- ログ -->
+  <div class="panel log-panel">
+    <div class="panel-head">
+      <h2>システムメッセージ</h2>
+      <button class="mini-btn" id="m1-reset" type="button">最初からやり直す</button>
+    </div>
+    <ul class="log" id="log-1" aria-live="polite"></ul>
+  </div>
+
+</section>
+
+
+<!-- ============================================================ -->
+<!-- モード2：犯人を探せ！ネットワークの競合                        -->
+<!-- ============================================================ -->
+<section class="mode is-hidden" id="mode-2" role="tabpanel" aria-labelledby="tab-2">
+
+  <div class="brief">
+    <p class="brief-lead">職員室のLANで2台が通信できません。原因を調べて直してください。</p>
+    <p class="brief-sub">診断ツールを起動してから、エラーの出ているパソコンを押すと設定を確認できます。</p>
+  </div>
+
+  <!-- ツールバー -->
+  <div class="toolbar">
+    <button class="tool-btn" id="diag-btn" type="button" aria-pressed="false">
+      <span aria-hidden="true">🔍</span> 診断ツールを起動
+    </button>
+    <p class="tool-hint" id="diag-hint">診断ツールは停止中です。</p>
+    <button class="dhcp-btn" id="dhcp-btn" type="button" disabled>
+      <span aria-hidden="true">✨</span> 秘技：DHCPサーバー起動
+    </button>
+  </div>
+
+  <!-- LANマップ -->
+  <div class="panel">
+    <div class="panel-head">
+      <h2>職員室のLANマップ</h2>
+      <p class="panel-note">赤い線＝通信できていないパソコン</p>
+    </div>
+
+    <div class="lan-wrap" id="lan-wrap">
+      <div class="lan-router">
+        <span aria-hidden="true">📡</span>
+        <span class="lan-router-name">ルータ</span>
+        <span class="lan-router-ip">192.168.1.1</span>
+      </div>
+      <div class="lan-grid" id="lan-grid"></div>
+      <!-- DHCPパケット演出用のレイヤー -->
+      <div class="packet-layer" id="packet-layer" aria-hidden="true"></div>
+    </div>
+  </div>
+
+  <!-- プロパティパネル -->
+  <div class="panel prop-panel" id="prop-panel">
+    <div class="panel-head">
+      <h2>ネットワーク設定</h2>
+      <p class="panel-note" id="prop-target">パソコンを選ぶと、ここに設定が出ます</p>
+    </div>
+
+    <div class="prop-empty" id="prop-empty">
+      <p>診断ツールを起動して、調べたいパソコンを押してください。</p>
+    </div>
+
+    <div class="prop-form is-hidden" id="prop-form">
+      <div class="prop-row">
+        <label for="ip-input">IPアドレス</label>
+        <input type="text" id="ip-input" class="ip-input" inputmode="decimal"
+               autocomplete="off" spellcheck="false">
+      </div>
+      <div class="prop-row">
+        <label for="mask-input">サブネットマスク</label>
+        <input type="text" id="mask-input" class="ip-input" value="255.255.255.0" readonly>
+      </div>
+      <div class="prop-row">
+        <label for="gw-input">デフォルトゲートウェイ</label>
+        <input type="text" id="gw-input" class="ip-input" value="192.168.1.1" readonly>
+      </div>
+      <p class="prop-msg" id="prop-msg"></p>
+      <div class="prop-actions">
+        <button class="primary-btn" id="save-btn" type="button">設定を保存する</button>
+        <button class="mini-btn" id="close-prop" type="button">閉じる</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ログ -->
+  <div class="panel log-panel">
+    <div class="panel-head">
+      <h2>システムメッセージ</h2>
+      <button class="mini-btn" id="m2-reset" type="button">最初からやり直す</button>
+    </div>
+    <ul class="log" id="log-2" aria-live="polite"></ul>
+  </div>
+
+</section>
+
+</main>
+
+<!-- クリア演出 -->
+<div class="overlay is-hidden" id="overlay">
+  <div class="overlay-card" role="alertdialog" aria-modal="true" aria-labelledby="ov-title">
+    <div class="overlay-spark" aria-hidden="true">🎉</div>
+    <h2 id="ov-title">ステージクリア！</h2>
+    <p id="ov-text"></p>
+    <button class="primary-btn" id="ov-close" type="button">続ける</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
