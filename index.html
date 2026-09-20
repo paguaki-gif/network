@@ -102,7 +102,12 @@
 
   <div class="brief">
     <p class="brief-lead">職員室のLANで2台が通信できません。原因を調べて直してください。</p>
-    <p class="brief-sub">診断ツールを起動してから、エラーの出ているパソコンを押すと設定を確認できます。</p>
+    <ol class="brief-steps">
+      <li>「診断ツールを起動」を押す</li>
+      <li>⚠️ が出ているパソコンを押して設定を見る</li>
+      <li>同じIPアドレスを使っている2台を見つける</li>
+      <li>片方を空いている番号に書き換えて保存する</li>
+    </ol>
   </div>
 
   <!-- ツールバー -->
@@ -124,12 +129,22 @@
     </div>
 
     <div class="lan-wrap" id="lan-wrap">
-      <div class="lan-router">
-        <span aria-hidden="true">📡</span>
-        <span class="lan-router-name">ルータ</span>
-        <span class="lan-router-ip">192.168.1.1</span>
+      <!-- 上段5台 -->
+      <div class="lan-row lan-row-top" id="lan-top"></div>
+
+      <!-- 幹線とルータ -->
+      <div class="lan-bus">
+        <div class="lan-bus-line" aria-hidden="true"></div>
+        <div class="lan-router">
+          <span aria-hidden="true">📡</span>
+          <span class="lan-router-name">ルータ</span>
+          <span class="lan-router-ip">192.168.1.1</span>
+        </div>
       </div>
-      <div class="lan-grid" id="lan-grid"></div>
+
+      <!-- 下段5台 -->
+      <div class="lan-row lan-row-bottom" id="lan-bottom"></div>
+
       <!-- DHCPパケット演出用のレイヤー -->
       <div class="packet-layer" id="packet-layer" aria-hidden="true"></div>
     </div>

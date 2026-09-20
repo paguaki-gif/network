@@ -30,6 +30,15 @@ function parseIp(text){
   return { net: nums.slice(0, 3).join("."), host: nums[3], text: nums.join(".") };
 }
 
+/** 配列をその場でシャッフルする（Fisher-Yates） */
+function shuffle(arr){
+  for (let i = arr.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
 /** ログを1行追加する。kind: "ok" | "bad" | "warn" | "info" */
 function addLog(listEl, kind, message){
   const now  = new Date();
@@ -115,6 +124,8 @@ function m1Init(){
   ];
   M1.picked  = null;
   M1.cleared = false;
+
+  shuffle(M1.cards);                 // 並び順を毎回ランダムにする
 
   M1.log.innerHTML = "";
   buildPcRow();
@@ -328,7 +339,6 @@ document.getElementById("m1-reset").addEventListener("click", m1Init);
 
 const M2 = {
   log:    document.getElementById("log-2"),
-  grid:   document.getElementById("lan-grid"),
   wrap:   document.getElementById("lan-wrap"),
   layer:  document.getElementById("packet-layer"),
   pcs:    [],
@@ -366,6 +376,10 @@ function m2Init(){
   M2.cleared = false;
 
   M2.log.innerHTML = "";
+
+  // 先にマップを組み立ててから表示を更新する
+  // （順序を逆にすると、まだ存在しないノードを参照して描画が止まる）
+  buildLanGrid();
   closeProp();
 
   const dhcpBtn = document.getElementById("dhcp-btn");
@@ -377,25 +391,33 @@ function m2Init(){
   document.getElementById("diag-hint").textContent = "診断ツールは停止中です。";
   M2.wrap.classList.remove("diag-on");
 
-  buildLanGrid();
   m2Render();
   addLog(M2.log, "bad", "2台のパソコンで通信エラーが発生しています。診断ツールで原因を調べてください。");
 }
 
-/** LANマップのDOMを作る */
+/** LANマップのDOMを作る（上段5台・下段5台をルータの幹線でつなぐ） */
 function buildLanGrid(){
-  M2.grid.innerHTML = "";
-  M2.pcs.forEach((pc) => {
-    const node = document.createElement("div");
-    node.className = "node";
+  const top    = document.getElementById("lan-top");
+  const bottom = document.getElementById("lan-bottom");
+  top.innerHTML = "";
+  bottom.innerHTML = "";
+
+  M2.pcs.forEach((pc, i) => {
+    const isTop = i < 5;                       // 前半5台を上段に置く
+    const node  = document.createElement("div");
+    node.className = "node " + (isTop ? "node-top" : "node-bottom");
     node.id = "node-" + pc.id;
-    node.innerHTML = `
-      <div class="node-line"></div>
+
+    const boxHtml = `
       <div class="node-box" tabindex="0" role="button" aria-label="${pc.id} を調べる">
         <div class="node-face">🖥️</div>
         <div class="node-name">${pc.id}</div>
         <div class="node-ip"></div>
       </div>`;
+    const lineHtml = `<div class="node-line"></div>`;
+
+    // 上段はPCの下から、下段はPCの上から幹線に向かって線を伸ばす
+    node.innerHTML = isTop ? boxHtml + lineHtml : lineHtml + boxHtml;
 
     const box = node.querySelector(".node-box");
     box.addEventListener("click", () => onNodeClick(pc.id));
@@ -403,7 +425,7 @@ function buildLanGrid(){
       if (e.key === "Enter" || e.key === " "){ e.preventDefault(); box.click(); }
     });
 
-    M2.grid.appendChild(node);
+    (isTop ? top : bottom).appendChild(node);
   });
 }
 
@@ -426,6 +448,7 @@ function isErrorPc(pc){
 function m2Render(){
   M2.pcs.forEach((pc) => {
     const node = document.getElementById("node-" + pc.id);
+    if (!node) return;                       // マップ未生成なら何もしない
     const err  = isErrorPc(pc);
     node.classList.toggle("is-error", err);
     node.classList.toggle("is-selected", M2.selected === pc.id);
