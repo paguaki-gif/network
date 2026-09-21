@@ -5,26 +5,26 @@
    配線盤をイメージした青灰ベース＋信号色（緑・赤・橙）
    ========================================================= */
 :root{
-  --ink:        #14212e;
-  --ink-soft:   #55677a;
-  --paper:      #eef3f8;
+  --ink:        #0d1822;   /* 本文：より濃く */
+  --ink-soft:   #3d5165;   /* 補足文：薄すぎないグレー */
+  --paper:      #e7eef6;
   --panel:      #ffffff;
-  --line:       #d3dde7;
-  --wire:       #b7c5d3;
+  --line:       #adbecd;   /* 枠線：はっきり見える濃さ */
+  --wire:       #7d94a9;   /* 未接続の配線：背景から浮くグレー */
 
-  --signal:     #10a05f;   /* 開通 */
-  --alert:      #e03131;   /* 衝突 */
-  --warn:       #ef8a09;   /* 別ネットワーク */
-  --router:     #2563c9;   /* ルータ／リンク */
+  --signal:     #0b7c46;   /* 開通（白背景でコントラスト比4.5:1以上） */
+  --alert:      #c92020;   /* 衝突 */
+  --warn:       #a75a00;   /* 別ネットワーク */
+  --router:     #1a4fa8;   /* ルータ／リンク */
 
-  --signal-bg:  #e3f6ec;
-  --alert-bg:   #fdeaea;
-  --warn-bg:    #fdf1e0;
-  --router-bg:  #e7eefb;
+  --signal-bg:  #d6f2e2;
+  --alert-bg:   #fbdcdc;
+  --warn-bg:    #fbe9cf;
+  --router-bg:  #dbe6fa;
 
   --radius:     14px;
   --radius-sm:  9px;
-  --shadow:     0 1px 2px rgba(20,33,46,.06), 0 8px 24px rgba(20,33,46,.07);
+  --shadow:     0 1px 2px rgba(13,24,34,.10), 0 8px 24px rgba(13,24,34,.10);
 
   --mono: "SFMono-Regular", "Roboto Mono", "Consolas", monospace;
   --sans: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP",
@@ -40,7 +40,7 @@ body{
   font-family:var(--sans);
   color:var(--ink);
   background:
-    linear-gradient(transparent 31px, rgba(37,99,201,.045) 32px) 0 0 / 100% 32px,
+    linear-gradient(transparent 31px, rgba(26,79,168,.085) 32px) 0 0 / 100% 32px,
     linear-gradient(90deg, transparent 31px, rgba(37,99,201,.045) 32px) 0 0 / 32px 100%,
     var(--paper);
   line-height:1.7;
@@ -127,10 +127,24 @@ button{ font-family:inherit; }
    共通レイアウト
    ========================================================= */
 main{
-  max-width:1080px;
+  max-width:1220px;
   margin:0 auto;
   padding:22px 20px 64px;
 }
+
+/* 本体（左）とシステムメッセージ（右）の2カラム */
+.mode-cols{
+  display:grid;
+  grid-template-columns:minmax(0, 1fr) 320px;
+  gap:18px;
+  align-items:start;
+}
+.mode-main{ min-width:0; }
+.mode-side{
+  position:sticky;
+  top:16px;
+}
+.mode-side .log-panel{ margin-bottom:0; }
 
 .brief{
   margin:0 0 18px;
@@ -165,10 +179,10 @@ main{
   flex-wrap:wrap;
   margin-bottom:12px;
   padding-bottom:9px;
-  border-bottom:1px dashed var(--line);
+  border-bottom:2px solid var(--line);
 }
 .panel-head h2{ font-size:1rem; }
-.panel-note{ margin:0; font-size:.78rem; color:var(--ink-soft); }
+.panel-note{ margin:0; font-size:.8rem; color:var(--ink-soft); }
 
 .mini-btn{
   border:1px solid var(--line);
@@ -215,8 +229,8 @@ main{
   gap:8px;
   padding:9px 14px;
   background:#fff;
-  border:2px solid var(--wire);
-  border-bottom-width:4px;
+  border:2.5px solid var(--wire);
+  border-bottom-width:5px;
   border-radius:var(--radius-sm);
   font-family:var(--mono);
   font-size:1rem;
@@ -265,8 +279,8 @@ main{
 .trunk{ position:relative; height:24px; }
 .trunk-stem{
   position:absolute; top:0; left:50%;
-  width:3px; height:100%;
-  margin-left:-1.5px;
+  width:4px; height:100%;
+  margin-left:-2px;
   background:var(--wire);
 }
 .trunk-bar{
@@ -274,7 +288,7 @@ main{
   bottom:0;
   left:calc((100% - var(--pc-gap) * (var(--pc-cols) - 1)) / var(--pc-cols) / 2);
   right:calc((100% - var(--pc-gap) * (var(--pc-cols) - 1)) / var(--pc-cols) / 2);
-  height:3px;
+  height:4px;
   background:var(--wire);
 }
 
@@ -289,7 +303,7 @@ main{
 /* 各PCへの引き込み線 */
 .drop-line{
   position:relative;
-  width:3px;
+  width:4px;
   height:38px;
   background:var(--wire);
   transition:background .25s;
@@ -323,25 +337,25 @@ main{
 .pc{
   width:100%;
   background:#fff;
-  border:2px solid var(--wire);
+  border:2.5px solid var(--wire);
   border-radius:var(--radius-sm);
   padding:10px 8px 12px;
   text-align:center;
   transition:border-color .25s, background .25s;
 }
 .pc-screen{ font-size:26px; line-height:1; }
-.pc-name{ font-size:.78rem; font-weight:700; color:var(--ink-soft); }
+.pc-name{ font-size:.8rem; font-weight:700; color:var(--ink); }
 
 .slot{
   margin-top:7px;
-  min-height:42px;
+  min-height:44px;
   display:flex;
   align-items:center;
   justify-content:center;
   padding:5px 4px;
-  border:2px dashed var(--wire);
+  border:2.5px dashed var(--wire);
   border-radius:8px;
-  background:#f7fafd;
+  background:#eaf0f6;
   font-family:var(--mono);
   font-size:.92rem;
   color:var(--ink-soft);
@@ -372,7 +386,7 @@ main{
 
 .pc-status{
   margin-top:6px;
-  font-size:.72rem;
+  font-size:.76rem;
   font-weight:700;
   min-height:1.1em;
 }
@@ -387,16 +401,17 @@ main{
   list-style:none;
   margin:0;
   padding:0;
-  max-height:190px;
+  max-height:60vh;
   overflow-y:auto;
   font-size:.85rem;
 }
 .log li{
-  padding:7px 11px;
+  padding:8px 11px;
   border-radius:8px;
-  margin-bottom:5px;
-  background:#f5f8fb;
-  border-left:4px solid var(--wire);
+  margin-bottom:6px;
+  background:#eef3f8;
+  border-left:5px solid var(--wire);
+  color:var(--ink);
 }
 .log li.ok  { background:var(--signal-bg); border-left-color:var(--signal); }
 .log li.bad { background:var(--alert-bg);  border-left-color:var(--alert); }
@@ -406,6 +421,7 @@ main{
   font-family:var(--mono);
   font-size:.74rem;
   color:var(--ink-soft);
+  font-weight:700;
   margin-right:7px;
 }
 
@@ -466,7 +482,7 @@ main{
 /* =========================================================
    モード2：LANマップ
    ========================================================= */
-.lan-wrap{ position:relative; --lan-gap:10px; --lan-cols:5; }
+.lan-wrap{ position:relative; --lan-gap:10px; --lan-cols:5; --bus-h:62px; }
 
 /* 上段・下段のPC列 */
 .lan-row{
@@ -478,7 +494,7 @@ main{
 /* 幹線（バス）とルータ */
 .lan-bus{
   position:relative;
-  height:62px;
+  height:var(--bus-h);
   display:flex;
   align-items:center;
   justify-content:center;
@@ -511,17 +527,30 @@ main{
 .node{ display:flex; flex-direction:column; align-items:center; }
 
 .node-line{
-  width:3px;
+  position:relative;
+  width:4px;
   height:22px;
   background:var(--signal);
   transition:background .25s;
 }
+/* 列の外側（幹線側）へ線を延長し、バスの中心線まで途切れずつなげる */
+.node-line::after{
+  content:"";
+  position:absolute;
+  left:0;
+  width:4px;
+  height:calc(var(--bus-h) / 2);
+  background:inherit;       /* エラー時の色もそのまま引き継ぐ */
+}
+.node-top .node-line::after{ top:100%; }
+.node-bottom .node-line::after{ bottom:100%; }
+
 .node.is-error .node-line{ background:var(--alert); }
 
 .node-box{
   width:100%;
   background:#fff;
-  border:2px solid var(--signal);
+  border:2.5px solid var(--signal);
   border-radius:var(--radius-sm);
   padding:9px 5px 10px;
   text-align:center;
@@ -542,8 +571,8 @@ main{
 .node-name{ font-size:.76rem; font-weight:700; }
 .node-ip{
   font-family:var(--mono);
-  font-size:.72rem;
-  color:var(--ink-soft);
+  font-size:.74rem;
+  color:var(--ink);
   word-break:break-all;
 }
 .node.is-error .node-ip{ color:var(--alert); font-weight:700; }
@@ -650,9 +679,16 @@ main{
 /* =========================================================
    レスポンシブ
    ========================================================= */
+/* サイドバーが入らない幅では、ログを本体の下に回す */
+@media (max-width:980px){
+  .mode-cols{ grid-template-columns:1fr; }
+  .mode-side{ position:static; }
+  .log{ max-height:170px; }
+}
+
 @media (max-width:860px){
   .lan-wrap{ --lan-gap:7px; }
-  .node-ip{ font-size:.66rem; }
+  .node-ip{ font-size:.68rem; }
 }
 
 @media (max-width:680px){
@@ -677,7 +713,7 @@ main{
   .node-face{ font-size:18px; }
   .node-name{ font-size:.68rem; }
   .node-ip{ font-size:.58rem; }
-  .lan-bus{ height:54px; }
+  .lan-wrap{ --bus-h:54px; }
   .lan-router{ padding:7px 12px; gap:6px; }
   .lan-router-ip{ font-size:.78rem; }
 

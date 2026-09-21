@@ -46,6 +46,9 @@
     <p class="brief-sub">カードをドラッグして枠に入れる／カードを押してから枠を押す、どちらでも置けます。枠のカードを押すと手札に戻ります。</p>
   </div>
 
+  <div class="mode-cols">
+  <div class="mode-main">
+
   <!-- 手札：アドレスカード -->
   <div class="panel">
     <div class="panel-head">
@@ -83,14 +86,20 @@
     </div>
   </div>
 
-  <!-- ログ -->
-  <div class="panel log-panel">
-    <div class="panel-head">
-      <h2>システムメッセージ</h2>
-      <button class="mini-btn" id="m1-reset" type="button">最初からやり直す</button>
+  </div><!-- /.mode-main -->
+
+  <!-- ログ（右側に固定表示） -->
+  <aside class="mode-side">
+    <div class="panel log-panel">
+      <div class="panel-head">
+        <h2>システムメッセージ</h2>
+        <button class="mini-btn" id="m1-reset" type="button">やり直す</button>
+      </div>
+      <ul class="log" id="log-1" aria-live="polite"></ul>
     </div>
-    <ul class="log" id="log-1" aria-live="polite"></ul>
-  </div>
+  </aside>
+
+  </div><!-- /.mode-cols -->
 
 </section>
 
@@ -109,6 +118,9 @@
       <li>片方を空いている番号に書き換えて保存する</li>
     </ol>
   </div>
+
+  <div class="mode-cols">
+  <div class="mode-main">
 
   <!-- ツールバー -->
   <div class="toolbar">
@@ -183,14 +195,20 @@
     </div>
   </div>
 
-  <!-- ログ -->
-  <div class="panel log-panel">
-    <div class="panel-head">
-      <h2>システムメッセージ</h2>
-      <button class="mini-btn" id="m2-reset" type="button">最初からやり直す</button>
+  </div><!-- /.mode-main -->
+
+  <!-- ログ（右側に固定表示） -->
+  <aside class="mode-side">
+    <div class="panel log-panel">
+      <div class="panel-head">
+        <h2>システムメッセージ</h2>
+        <button class="mini-btn" id="m2-reset" type="button">やり直す</button>
+      </div>
+      <ul class="log" id="log-2" aria-live="polite"></ul>
     </div>
-    <ul class="log" id="log-2" aria-live="polite"></ul>
-  </div>
+  </aside>
+
+  </div><!-- /.mode-cols -->
 
 </section>
 
